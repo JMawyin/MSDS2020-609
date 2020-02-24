@@ -1,0 +1,270 @@
+---
+title: "609 HW#2"
+author: "Jose Mawyin"
+date: "2/22/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(maditr)
+```
+
+1.For each of the following data sets, formulate the mathematical model that minimizes the largest deviation between the data and the line y = ax+b. If a computer is available, solve for the estimates of a and b. (Chapter3: Model Fitting, Pg.121)
+
+```{r}
+x <- c(29.1, 48.2, 72.7, 92.0, 118, 140, 165, 199)
+y <- c(0.0493, 0.0821, 0.123, 0.154, 0.197, 0.234, 0.274, 0.328)
+cat("X:");x;cat("Y:");y
+plot(x,y,main="Scatter Plot and Linear Fit")
+abline(lm(y ~ x))
+```
+```{r}
+model1 <- lm(y ~ x)
+summary(model1)
+```
+
+The y intercept is 2.926e-03 and the slope is 1.641e-03.
+
+
+=============================================================================
+=============================================================================
+
+2. a. In the following data, W represents the weight of a fish (bass) and l represents its length. Fit the model $W=k l^{3}$ to the data using the least-squares criterion. (Chapter3: Model Fitting, Pg.136)
+
+```{r}
+length <- c(14.5, 12.5, 17.25, 14.5, 12.625, 17.75, 14.125, 12.625)
+girth <- c(9.75, 8.375, 11, 9.75, 8.5,12.5, 9.0, 8.5)
+weight <- c(27, 17, 41, 26, 17, 49, 23, 16)
+```
+
+```{r}
+model2 <- lm(weight ~ length^3)
+summary(model2)
+```
+
+
+
+
+b. In the following data, g represents the girth of a fish. Fit the model $W=k l g^{2}$ to the data using the least-squares criterion. 
+
+```{r}
+model2 <- lm(weight ~ length*(girth^2))
+summary(model2)
+```
+
+c. Which of the two models fits the data better? Justify fully. Which model do you prefer? Why? 
+
+The second model $W=k l g^{2}$ fits the data better. The goodness-of-fit measure R-squared of 0.9981 indicates that almost all of the variability in the data is explainec by the regresion model.
+
+
+=============================================================================
+=============================================================================
+
+3.Construct a scatterplot of the given data. Is there a trend in the data? Are any of the data points outliers? Construct a divided difference table. Is smoothing with a low-order polynomial appropriate? If so, choose an appropriate polynomial and fit using the least-squares criterion of best fit. Analyze the goodness of fit by examining appropriate indicators and graphing the model, the data points, and the deviations. (Chapter4: Experimental Modeling, Pg.169)
+
+```{r}
+length <- c(12.5, 12.625, 14.125, 14.5, 17.25, 17.75)
+weight <- c(17, 16.5, 23, 26.5, 41, 49)
+plot(weight,length, main = "Scatter plot and Linear Fit")
+abline(lm(length ~ weight))
+```
+
+
+```{r}
+length <- c(12.5, 12.625, 14.125, 14.5, 17.25, 17.75)
+weight <- c(17, 16.5, 23, 26.5, 41, 49)
+model3a <- lm(length ~ poly(weight, 2))
+model3a
+model3b <- lm(length ~ poly(weight, 3))
+model3b
+model3c <- lm(length ~ poly(weight, 4))
+model3c
+x <- weight
+y1 <- predict(lm(length ~ poly(weight, 2)), newdata = data.frame(weight))
+y2 <- predict(lm(length ~ poly(weight, 3)), newdata = data.frame(weight))
+y3 <- predict(lm(length ~ poly(weight, 4)), newdata = data.frame(weight))
+plot(weight,length, main = "Scatter Plot and Cubic")
+lines(x, y1, col = "red")
+lines(x, y2, col = "blue")
+lines(x, y3, col = "green")
+```
+```{r}
+par(mfrow=c(2,2))
+plot(fitted(model3a),residuals(model3a),main="Residuals with Quadratic Polynomial",ylim=c(-0.2, 0.2))
+plot(fitted(model3b),residuals(model3b),main="Residuals with Cubic Polynomial",ylim=c(-0.2, 0.2))
+plot(fitted(model3c),residuals(model3c),main="Residuals with Quartic Polynomial",ylim=c(-0.2, 0.2))
+```
+
+We see above how the residuals decrease as the order of the polynomial increases improving the fit. However, the risk with higher order polynomials is that of overfitting the data.
+
+![Difference Table](/Users/josemawyin/Downloads/IMG_9835.jpg)
+
+=============================================================================
+=============================================================================
+
+4. Use the middle-square method to generate (Chapter5: Simulation Modeling, Pg.194): 
+a.	10 random numbers using x0 = 1009.
+```{r}
+n <- 1
+n1 <- 1009
+n1_list <- c()
+n1_rdn_list <- c()
+for (i in 1:10){
+  n <- n1*n1
+  n
+  n1 <- as.numeric(substr(n, start = 3, stop = 6))
+  n1_list <- c(n1_list, n)
+  n1_rdn_list <- c(n1_rdn_list, n1)
+}
+table(n1_rdn_list)
+```
+
+
+b.	20 random numbers using x0 = 653217.
+```{r}
+n2 <- 653217
+n2_list <- c()
+n2_rdn_list <- c()
+for (i in 1:20){
+  n <- n2*n2
+  n
+  n2 <- as.numeric(substr(n, start = 4, stop = 9))
+  n2_list <- c(n2_list, n)
+  n2_rdn_list <- c(n2_rdn_list, n2)
+}
+table(n2_rdn_list)
+```
+
+c.	15 random numbers using x0 = 3043. 
+```{r}
+n <- 1
+n3 <- 3043
+n3_list <- c()
+n3_rdn_list <- c()
+for (i in 1:15){
+  n <- n3*n3
+  n
+  n3 <- as.numeric(substr(n, start = 3, stop = 6))
+  n3_list <- c(n3_list, n)
+  n3_rdn_list <- c(n3_rdn_list, n3)
+}
+table(n3_rdn_list)
+```
+
+d.	Comment about the results of each sequence. 
+Was there cycling? Did each sequence degenerate rapidly? 
+
+We can see above that the middle-square method produced non-repeated results based on the given seed and output number. Other seed numbers could have shown cycling and sequence degeneration but the given values for this exercise did not.
+
+
+=============================================================================
+=============================================================================
+
+5.In many situations, the time T between deliveries and the order quantity Q is not fixed. Instead, an order is placed for a specific amount of gasoline. Depending on how many orders are placed in a given time interval, the time to fill an order varies. You have no reason to believe that the performance of the delivery operation will change. Therefore, you have examined records for the past 100 deliveries and found the following lag times, or extra days, required to fill your order:
+
+```{r}
+Lag_time <- c(2,3,4,5,6,7)
+Number_occurrences <- c(10,25,30,20,13,2)
+plot(Lag_time, Number_occurrences)
+```
+
+
+
+Construct a Monte Carlo simulation for the lag time submodel. If you have a handheld calculator or computer available, test your submodel by running 1000 trials and comparing the number of occurrences of the various lag times with the historical data. (Chapter5: Simulation Modeling, Pg.211)
+```{r}
+Total_counts <- c(0,0,0,0,0,0)
+```
+Random number  | Corresponding Lag  | Percent occurrence
+------------- | -------------  | -------------
+0 <= x < 0.1 |       2        |      0.1 
+0.1 <= x < 0.35 |       3        |      0.25 
+0.35 <= x < 0.65 |       4        |      0.3 
+0.65 <= x < 0.85 |       5        |      0.2 
+0.85 <= x < 0.98 |       6        |      0.13 
+0.98 <= x <= 1 |       7        |      0.02 
+
+In the three following plots, we see how accurately the Monte Carlo model matches the observed data when the number of trials are: 
+
+####100 Trials
+```{r}
+rdn_list <- c()
+Total_counts <- c(0,0,0,0,0,0)
+trials <- 100
+for (i in 1:trials){
+  x<-runif(1)
+  rdn_list <- c(rdn_list,x)
+  if ( x >= 0 & x <= 0.1) {
+Total_counts[1] <- Total_counts[1]+1
+} else if ( x >= 0.1 & x <= 0.35) {
+Total_counts[2] <- Total_counts[2]+1
+} else if ( x >= 0.35 & x <= 0.65) {
+Total_counts[3] <- Total_counts[3]+1
+} else if ( x >= 0.65 & x <= 0.85) {
+Total_counts[4] <- Total_counts[4]+1
+} else if ( x >= 0.85 & x <= 0.98) {
+Total_counts[5] <- Total_counts[5]+1
+} else {
+Total_counts[6] <- Total_counts[6]+1
+}
+}
+#rdn_list
+cat("Simulated Occurrences:\n",Total_counts, "\nObserved Occurrences:\n",Number_occurrences)
+plot(Total_counts, Number_occurrences*1, main="Monte Carlo Simulation of 100 trials")
+```
+
+####1000 Trials
+```{r}
+rdn_list <- c()
+Total_counts <- c(0,0,0,0,0,0)
+trials <- 1000
+for (i in 1:trials){
+  x<-runif(1)
+  rdn_list <- c(rdn_list,x)
+  if ( x >= 0 & x <= 0.1) {
+Total_counts[1] <- Total_counts[1]+1
+} else if ( x >= 0.1 & x <= 0.35) {
+Total_counts[2] <- Total_counts[2]+1
+} else if ( x >= 0.35 & x <= 0.65) {
+Total_counts[3] <- Total_counts[3]+1
+} else if ( x >= 0.65 & x <= 0.85) {
+Total_counts[4] <- Total_counts[4]+1
+} else if ( x >= 0.85 & x <= 0.98) {
+Total_counts[5] <- Total_counts[5]+1
+} else {
+Total_counts[6] <- Total_counts[6]+1
+}
+}
+#rdn_list
+cat("Simulated Occurrences:\n",Total_counts, "\nObserved Occurrences:\n",Number_occurrences*10)
+plot(Total_counts, Number_occurrences*10, main="Monte Carlo Simulation of 1000 trials")
+```
+
+####10000 Trials
+```{r}
+rdn_list <- c()
+Total_counts <- c(0,0,0,0,0,0)
+trials <- 10000
+for (i in 1:trials){
+  x<-runif(1)
+  rdn_list <- c(rdn_list,x)
+  if ( x >= 0 & x <= 0.1) {
+Total_counts[1] <- Total_counts[1]+1
+} else if ( x >= 0.1 & x <= 0.35) {
+Total_counts[2] <- Total_counts[2]+1
+} else if ( x >= 0.35 & x <= 0.65) {
+Total_counts[3] <- Total_counts[3]+1
+} else if ( x >= 0.65 & x <= 0.85) {
+Total_counts[4] <- Total_counts[4]+1
+} else if ( x >= 0.85 & x <= 0.98) {
+Total_counts[5] <- Total_counts[5]+1
+} else {
+Total_counts[6] <- Total_counts[6]+1
+}
+}
+#rdn_list
+cat("Simulated Occurrences:\n",Total_counts, "\nObserved Occurrences:\n",Number_occurrences*100)
+plot(Total_counts, Number_occurrences*100, main="Monte Carlo Simulation of 10000 trials")
+```
+
+
